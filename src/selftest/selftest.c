@@ -23,7 +23,7 @@
 
 #include <internal.h>
 #include <controller.h>
-#include <ft5x\ftinternal.h>
+#include <hx83112/hxinternal.h>
 #include <spb.h>
 #include <initguid.h>
 #include <devguid.h>
@@ -244,7 +244,7 @@ Return Value:
                 goto exit;
             }
 
-            status = Ft5xChangePage(
+            status = HimaxChangePage(
                 devContext->TouchContext,
                 &devContext->I2CContext,
                 *requestedPage);

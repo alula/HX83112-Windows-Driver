@@ -22,7 +22,7 @@
 #include <Cross Platform Shim\compat.h>
 #include <controller.h>
 #include <spb.h>
-#include <ft5x\ftinternal.h>
+#include <hx83112/hxinternal.h>
 #include <internal.h>
 #include <touch_power\touch_power.h>
 #include <power.tmh>
@@ -37,7 +37,7 @@ TchPowerSettingCallback(
 {
     NTSTATUS status = STATUS_SUCCESS;
     PDEVICE_EXTENSION devContext = NULL;
-    FT5X_CONTROLLER_CONTEXT* ControllerContext = NULL;
+    HIMAX_CONTROLLER_CONTEXT* ControllerContext = NULL;
     SPB_CONTEXT* SpbContext = NULL;
 
     if (Context == NULL)
@@ -53,7 +53,7 @@ TchPowerSettingCallback(
     }
 
     devContext = (PDEVICE_EXTENSION)Context;
-    ControllerContext = (FT5X_CONTROLLER_CONTEXT*)devContext->TouchContext;
+    ControllerContext = (HIMAX_CONTROLLER_CONTEXT*)devContext->TouchContext;
     SpbContext = &(devContext->I2CContext);
 
     //
@@ -88,7 +88,7 @@ TchPowerSettingCallback(
                 TRACE_POWER,
                 "On Battery Power");
 
-            status = Ft5xChangeChargerConnectedState(
+            status = HimaxChangeChargerConnectedState(
                 ControllerContext,
                 SpbContext,
                 0
@@ -112,7 +112,7 @@ TchPowerSettingCallback(
                 TRACE_POWER,
                 "On External Power");
 
-            status = Ft5xChangeChargerConnectedState(
+            status = HimaxChangeChargerConnectedState(
                 ControllerContext,
                 SpbContext,
                 1
@@ -185,10 +185,10 @@ TchPowerSettingCallback(
                 &GestureEnabled,
                 sizeof(DWORD))) && GestureEnabled == 1)
             {
-                status = Ft5xSetReportingFlagsF12(
+                status = HimaxSetReportingFlagsF12(
                     ControllerContext,
                     SpbContext,
-                    FT5X_F12_REPORTING_WAKEUP_GESTURE_MODE,
+                    HX83112_F12_REPORTING_WAKEUP_GESTURE_MODE,
                     NULL
                 );
 
@@ -229,13 +229,13 @@ TchPowerSettingCallback(
                     TRACE_POWER,
                     "Error changing touch power state - 0x%08lX",
                     status);
-                goto exit;
+                //goto exit;
             }
 
-            status = Ft5xSetReportingFlagsF12(
+            status = HimaxSetReportingFlagsF12(
                 ControllerContext,
                 SpbContext,
-                FT5X_F12_REPORTING_CONTINUOUS_MODE,
+                HX83112_F12_REPORTING_CONTINUOUS_MODE,
                 NULL
             );
 
@@ -292,10 +292,10 @@ Return Value:
 
 --*/
 {    
-    FT5X_CONTROLLER_CONTEXT* controller;
+    HIMAX_CONTROLLER_CONTEXT* controller;
     NTSTATUS status;
 
-    controller = (FT5X_CONTROLLER_CONTEXT*) ControllerContext;
+    controller = (HIMAX_CONTROLLER_CONTEXT*) ControllerContext;
 
     //
     // Check if we were already on
@@ -310,10 +310,10 @@ Return Value:
     //
     // Attempt to put the controller into operating mode 
     //
-    status = Ft5xChangeSleepState(
+    status = HimaxChangeSleepState(
         controller,
         SpbContext,
-        FT5X_F01_DEVICE_CONTROL_SLEEP_MODE_OPERATING);
+        HX83112_F01_DEVICE_CONTROL_SLEEP_MODE_OPERATING);
 
     if (!NT_SUCCESS(status))
     {
@@ -353,10 +353,10 @@ Return Value:
 
 --*/
 {
-    FT5X_CONTROLLER_CONTEXT* controller;
+    HIMAX_CONTROLLER_CONTEXT* controller;
     NTSTATUS status;
 
-    controller = (FT5X_CONTROLLER_CONTEXT*) ControllerContext;
+    controller = (HIMAX_CONTROLLER_CONTEXT*) ControllerContext;
 
     //
     // Interrupts are now disabled but the ISR may still be
@@ -368,10 +368,10 @@ Return Value:
     //
     // Put the chip in sleep mode
     //
-    status = Ft5xChangeSleepState(
+    status = HimaxChangeSleepState(
         ControllerContext,
         SpbContext,
-        FT5X_F01_DEVICE_CONTROL_SLEEP_MODE_SLEEPING);
+        HX83112_F01_DEVICE_CONTROL_SLEEP_MODE_SLEEPING);
 
     if (!NT_SUCCESS(status))
     {

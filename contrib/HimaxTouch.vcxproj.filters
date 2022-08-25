@@ -31,10 +31,10 @@
     <Filter Include="Source Files\touch_power">
       <UniqueIdentifier>{48991f5f-ce72-428a-bb02-7ff9f171fa57}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\ft5x">
+    <Filter Include="Source Files\hx83112">
       <UniqueIdentifier>{e315ae58-595b-4761-a85d-b9f815945abc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\ft5x">
+    <Filter Include="Header Files\hx83112">
       <UniqueIdentifier>{1a4a2c90-09cc-463b-b270-18cd15f46d6c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -58,9 +58,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\queue.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\registry.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\resolutions.c">
@@ -87,8 +84,11 @@
     <ClCompile Include="..\src\report.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\ft5x\ftinternal.c">
-      <Filter>Source Files\ft5x</Filter>
+    <ClCompile Include="..\src\hx83112\hxinternal.c">
+      <Filter>Source Files\hx83112</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\registry.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,7 +97,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="..\src\FocalTechTouch.inf">
+    <Inf Include="..\src\HimaxTouch.inf">
       <Filter>Driver Files</Filter>
     </Inf>
   </ItemGroup>
@@ -162,8 +162,8 @@
     <ClInclude Include="..\include\report.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\ft5x\ftinternal.h">
-      <Filter>Header Files\ft5x</Filter>
+    <ClInclude Include="..\Include\hx83112\hxinternal.h">
+      <Filter>Header Files\hx83112</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,12 +1,10 @@
-# Focal Tech Touch 5x Controller Driver for Windows
-In this repository you can find the Focal Tech Touch 5x controller driver for Windows (KMDF).
-This driver supports Focal Tech 5x touch controllers.
+# HX83112 Digitizer Driver for Windows
 
-This repository has been forked from https://github.com/theR4K/SynapticsTouch for the base and modified to work with Focal Tech digitizers.
+WIP, but functional.
 
-## Disclaimer
-This driver is not finished.
-It contains debug code and might be missing comments as well.
-Tracing has been replaced with KdPrintEx for various reason making development easier on some versions of Windows.
+Tested only on TP1803. 
 
-Have fun =)
+## Credits 
+
+- Based mostly on https://github.com/gus33000/FocalTechTouch
+- Some code has been ported from hxchipset driver (https://github.com/HimaxSoftware/HX83112_Android_Driver)

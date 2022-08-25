@@ -23,31 +23,31 @@
 #include <Cross Platform Shim\compat.h>
 #include <internal.h>
 #include <controller.h>
-#include <ft5x\ftinternal.h>
+#include <hx83112/hxinternal.h>
 #include <hid.h>
 #include <hid.tmh>
 
-const USHORT gOEMVendorID = 0x6674;    // "ft"
-const USHORT gOEMProductID = 0x3578;    // "5x"
+const USHORT gOEMVendorID = 0x22C5;
+const USHORT gOEMProductID = 0x3112;
 const USHORT gOEMVersionID = 3200;
 
-const PWSTR gpwstrManufacturerID = L"FocalTech";
-const PWSTR gpwstrProductID = L"5x06";
-const PWSTR gpwstrSerialNumber = L"5x06";
+const PWSTR gpwstrManufacturerID = L"Himax Technologies, Inc.";
+const PWSTR gpwstrProductID = L"HX83112";
+const PWSTR gpwstrSerialNumber = L"HX83112";
 
 //
 // HID Report Descriptor for a touch device
 //
 
 const UCHAR gReportDescriptor[] = {
-	FOCALTECH_FT5X_DIGITIZER_DIAGNOSTIC1,
-	FOCALTECH_FT5X_DIGITIZER_DIAGNOSTIC2,
-	FOCALTECH_FT5X_DIGITIZER_DIAGNOSTIC3,
-	FOCALTECH_FT5X_DIGITIZER_DIAGNOSTIC4,
-	FOCALTECH_FT5X_DIGITIZER_FINGER,
-	FOCALTECH_FT5X_DIGITIZER_REPORTMODE,
-	FOCALTECH_FT5X_DIGITIZER_KEYPAD,
-	FOCALTECH_FT5X_DIGITIZER_STYLUS
+	HIMAX_HX83112_DIGITIZER_DIAGNOSTIC1,
+	HIMAX_HX83112_DIGITIZER_DIAGNOSTIC2,
+	HIMAX_HX83112_DIGITIZER_DIAGNOSTIC3,
+	HIMAX_HX83112_DIGITIZER_DIAGNOSTIC4,
+	HIMAX_HX83112_DIGITIZER_FINGER,
+	HIMAX_HX83112_DIGITIZER_REPORTMODE,
+	HIMAX_HX83112_DIGITIZER_KEYPAD,
+	HIMAX_HX83112_DIGITIZER_STYLUS
 };
 const ULONG gdwcbReportDescriptor = sizeof(gReportDescriptor);
 
@@ -288,7 +288,7 @@ Return Value:
 	//
 	if (devContext->ServiceInterruptsAfterD0Entry == TRUE)
 	{
-		Ft5xServiceInterrupts(
+		HimaxServiceInterrupts(
 			devContext->TouchContext,
 			&devContext->I2CContext,
 			&devContext->ReportContext);
@@ -390,13 +390,12 @@ TchGenerateHidReportDescriptor(
 )
 {
 	PDEVICE_EXTENSION devContext;
-	FT5X_CONTROLLER_CONTEXT* touchContext;
+	HIMAX_CONTROLLER_CONTEXT* touchContext;
 	NTSTATUS status;
 
 	devContext = GetDeviceContext(Device);
 
-	touchContext = (FT5X_CONTROLLER_CONTEXT*)devContext->TouchContext;
-
+	touchContext = (HIMAX_CONTROLLER_CONTEXT*)devContext->TouchContext;
 	PUCHAR hidReportDescBuffer = (PUCHAR)ExAllocatePoolWithTag(
 		NonPagedPool,
 		gdwcbReportDescriptor,
@@ -905,9 +904,9 @@ Return Value:
 		capsReport->MaximumContactPoints = PTP_MAX_CONTACT_POINTS;
 		capsReport->ReportID = REPORTID_DEVICE_CAPS;
 
-		if (devContext->TouchContext != NULL && ((FT5X_CONTROLLER_CONTEXT*)devContext->TouchContext)->MaxFingers != 0)
+		if (devContext->TouchContext != NULL && ((HIMAX_CONTROLLER_CONTEXT*)devContext->TouchContext)->MaxFingers != 0)
 		{
-			capsReport->MaximumContactPoints = ((FT5X_CONTROLLER_CONTEXT*)devContext->TouchContext)->MaxFingers;
+			capsReport->MaximumContactPoints = ((HIMAX_CONTROLLER_CONTEXT*)devContext->TouchContext)->MaxFingers;
 		}
 
 		Trace(

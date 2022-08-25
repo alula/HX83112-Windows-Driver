@@ -21,7 +21,7 @@
 
 #include <Cross Platform Shim\compat.h>
 #include <spb.h>
-#include <ft5x\ftinternal.h>
+#include <hx83112/hxinternal.h>
 #include <init.tmh>
 
 NTSTATUS
@@ -49,18 +49,18 @@ TchStartDevice(
 
 --*/
 {
-	FT5X_CONTROLLER_CONTEXT* controller;
+	HIMAX_CONTROLLER_CONTEXT* controller;
 	ULONG interruptStatus;
 	NTSTATUS status;
 
-	controller = (FT5X_CONTROLLER_CONTEXT*)ControllerContext;
+	controller = (HIMAX_CONTROLLER_CONTEXT*)ControllerContext;
 	interruptStatus = 0;
 	status = STATUS_SUCCESS;
 
 	//
-	// Populate context with FT5X function descriptors
+	// Populate context with HX83112 function descriptors
 	//
-	status = Ft5xBuildFunctionsTable(
+	status = HimaxBuildFunctionsTable(
 		ControllerContext,
 		SpbContext);
 
@@ -69,15 +69,15 @@ TchStartDevice(
 		Trace(
 			TRACE_LEVEL_ERROR,
 			TRACE_INIT,
-			"Could not build table of FT5X functions - 0x%08lX",
+			"Could not build table of HX83112 functions - 0x%08lX",
 			status);
 		goto exit;
 	}
 
 	//
-	// Initialize FT5X function control registers
+	// Initialize HX83112 function control registers
 	//
-	status = Ft5xConfigureFunctions(
+	status = HimaxConfigureFunctions(
 		ControllerContext,
 		SpbContext);
 
@@ -92,7 +92,7 @@ TchStartDevice(
 		goto exit;
 	}
 
-	status = Ft5xConfigureInterruptEnable(
+	status = HimaxConfigureInterruptEnable(
 		ControllerContext,
 		SpbContext);
 
@@ -109,7 +109,7 @@ TchStartDevice(
 	//
 	// Read and store the firmware version
 	//
-	status = Ft5xGetFirmwareVersion(
+	status = HimaxGetFirmwareVersion(
 		ControllerContext,
 		SpbContext);
 
@@ -118,7 +118,7 @@ TchStartDevice(
 		Trace(
 			TRACE_LEVEL_ERROR,
 			TRACE_INIT,
-			"Could not get FT5X firmware version - 0x%08lX",
+			"Could not get HX83112 firmware version - 0x%08lX",
 			status);
 		goto exit;
 	}
@@ -126,7 +126,7 @@ TchStartDevice(
 	//
 	// Clear any pending interrupts
 	//
-	status = Ft5xCheckInterrupts(
+	status = HimaxCheckInterrupts(
 		ControllerContext,
 		SpbContext,
 		&interruptStatus
@@ -167,11 +167,11 @@ Return Value:
 	NTSTATUS indicating sucess or failure
 --*/
 {
-	FT5X_CONTROLLER_CONTEXT* controller;
+	HIMAX_CONTROLLER_CONTEXT* controller;
 
 	UNREFERENCED_PARAMETER(SpbContext);
 
-	controller = (FT5X_CONTROLLER_CONTEXT*)ControllerContext;
+	controller = (HIMAX_CONTROLLER_CONTEXT*)ControllerContext;
 
 	return STATUS_SUCCESS;
 }
@@ -197,12 +197,12 @@ Return Value:
 	NTSTATUS indicating sucess or failure
 --*/
 {
-	FT5X_CONTROLLER_CONTEXT* context;
+	HIMAX_CONTROLLER_CONTEXT* context;
 	NTSTATUS status;
 	
 	context = ExAllocatePoolWithTag(
 		NonPagedPoolNx,
-		sizeof(FT5X_CONTROLLER_CONTEXT),
+		sizeof(HIMAX_CONTROLLER_CONTEXT),
 		TOUCH_POOL_TAG);
 
 	if (NULL == context)
@@ -216,13 +216,8 @@ Return Value:
 		goto exit;
 	}
 
-	RtlZeroMemory(context, sizeof(FT5X_CONTROLLER_CONTEXT));
+	RtlZeroMemory(context, sizeof(HIMAX_CONTROLLER_CONTEXT));
 	context->FxDevice = FxDevice;
-
-	//
-	// Get Touch settings and populate context
-	//
-	TchGetTouchSettings(&context->TouchSettings);
 
 	//
 	// Allocate a WDFWAITLOCK for guarding access to the
@@ -271,9 +266,9 @@ Return Value:
 	NTSTATUS indicating sucess or failure
 --*/
 {
-	FT5X_CONTROLLER_CONTEXT* controller;
+	HIMAX_CONTROLLER_CONTEXT* controller;
 
-	controller = (FT5X_CONTROLLER_CONTEXT*)ControllerContext;
+	controller = (HIMAX_CONTROLLER_CONTEXT*)ControllerContext;
 
 	if (controller != NULL)
 	{

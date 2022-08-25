@@ -23,12 +23,11 @@
 #include <controller.h>
 #include <device.h>
 #include <spb.h>
-//#include <FocalTechTouchDriverETW.h>
 #include <idle.h>
 #include <hid.h>
 #include <gpio.h>
 #include <device.h>
-#include <ft5x/ftinternal.h>
+#include <hx83112/hxinternal.h>
 #include <report.h>
 #include <touch_power/touch_power.h>
 #include <device.tmh>
@@ -95,7 +94,7 @@ OnInterruptIsr(
     //
     // Service touch interrupts.
     //
-    status = Ft5xServiceInterrupts(
+    status = HimaxServiceInterrupts(
         devContext->TouchContext,
         &devContext->I2CContext,
         &devContext->ReportContext);
@@ -155,7 +154,7 @@ Return Value:
     }
 
     //
-    // N.B. This FT5X chip's IRQ is level-triggered, but cannot be enabled in
+    // N.B. This HX83112 chip's IRQ is level-triggered, but cannot be enabled in
     //      ACPI until passive-level interrupt handling is added to the driver.
     //      Service chip in case we missed an edge during D3 or boot-up.
     //
@@ -344,6 +343,9 @@ OnPrepareHardware(
             devContext->I2CContext.I2cResHubId.HighPart =
                 res->u.Connection.IdHighPart;
 
+            UINT64 id = ((UINT64)res->u.Connection.IdHighPart << 32) | ((UINT64)res->u.Connection.IdLowPart);
+            Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "I2C connection: %ld", id);
+
             status = STATUS_SUCCESS;
         }
 
@@ -356,9 +358,16 @@ OnPrepareHardware(
             devContext->ResetGpioId.HighPart =
                 res->u.Connection.IdHighPart;
 
+            Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Reset GPIO: %08x-%08x", res->u.Connection.IdHighPart, res->u.Connection.IdLowPart);
+
             devContext->HasResetGpio = TRUE;
         }
     }
+
+    // hack
+    //devContext->ResetGpioId.LowPart = 54;
+    //devContext->ResetGpioId.HighPart = 0;
+    //devContext->HasResetGpio = TRUE;
 
     if (!NT_SUCCESS(status))
     {
@@ -378,6 +387,8 @@ OnPrepareHardware(
             Trace(TRACE_LEVEL_ERROR, TRACE_DRIVER, "OpenIOTarget failed for Reset GPIO 0x%x", status);
             goto exit;
         }
+
+        Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "HasResetGpio == true");
 
         Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Starting bring up sequence for the controller");
 
@@ -403,6 +414,8 @@ OnPrepareHardware(
 
         Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Done");
     }
+
+    Trace(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "Pre SpbTargetInitialize");
 
     //
     // Initialize Spb so the driver can issue reads/writes
@@ -452,24 +465,6 @@ OnPrepareHardware(
             TRACE_LEVEL_ERROR,
             TRACE_INIT,
             "Error allocating touch context - 0x%08lX", 
-            status);
-
-        goto exit;
-    }
-
-    //
-    // Fetch controller settings from registry
-    //
-    status = TchRegistryGetControllerSettings(
-        devContext->TouchContext,
-        devContext->FxDevice);
-
-    if (!NT_SUCCESS(status))
-    {
-        Trace(
-            TRACE_LEVEL_ERROR,
-            TRACE_INIT,
-            "Error retrieving controller settings from registry - 0x%08lX",
             status);
 
         goto exit;

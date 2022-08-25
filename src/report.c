@@ -451,6 +451,7 @@ Return Value:
 			//
 			// Perform per-platform x/y adjustments to controller coordinates
 			//
+
 			TchTranslateToDisplayCoordinates(
 				&SctatchX,
 				&ScratchY,
@@ -572,6 +573,12 @@ ReportConfigureContinuousSimulationTimer(
 
 	WDF_TIMER_CONFIG  timerConfig;
 	WDF_OBJECT_ATTRIBUTES  timerAttributes;
+
+	Trace(
+		TRACE_LEVEL_INFORMATION,
+		TRACE_INIT,
+		"ReportConfigureContinuousSimulationTimer"
+	);
 
 	WDF_TIMER_CONFIG_INIT(
       	&timerConfig,

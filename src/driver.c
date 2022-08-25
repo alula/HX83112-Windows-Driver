@@ -28,6 +28,7 @@
 #include <selftest\selftest.h>
 #include <selftest\enoselftest.h>
 #include <driver.h>
+#include <trace.h>
 #include <driver.tmh>
 
 #ifdef ALLOC_PRAGMA
@@ -66,7 +67,7 @@ Return Value:
     //
     // Initialize tracing via WPP
     //
-    WPP_INIT_TRACING(DriverObject, RegistryPath);
+    //WPP_INIT_TRACING(DriverObject, RegistryPath);
 
     //
     // Create a framework driver object
@@ -93,7 +94,7 @@ Return Value:
             "Error creating WDF driver object - 0x%08lX",
             status);
 
-        WPP_CLEANUP(DriverObject);
+        //WPP_CLEANUP(DriverObject);
 
         goto exit;
     }
@@ -350,5 +351,5 @@ Return Value:
 {
     PAGED_CODE();
 
-    WPP_CLEANUP(WdfDriverWdmGetDriverObject(Driver));
+    //WPP_CLEANUP(WdfDriverWdmGetDriverObject(Driver));
 }
